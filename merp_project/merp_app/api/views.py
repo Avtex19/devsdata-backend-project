@@ -12,7 +12,7 @@ from django.utils import timezone
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
-        'events'
+        'events/',
         'reservation/',
         'reservation/create',
     ]
