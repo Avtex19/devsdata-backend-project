@@ -10,10 +10,13 @@ class EventAdmin(admin.ModelAdmin):
     ordering = ('start_date',)
 
 
+
 class ReservationAdmin(admin.ModelAdmin):
     list_display = ('event', 'email', 'reservation_code', 'status', 'created_at')
     list_filter = ('status', 'created_at')
     search_fields = ('email', 'reservation_code')
+    readonly_fields = ('reservation_code','created_at')
+
 
 
 admin.site.register(Event, EventAdmin)
