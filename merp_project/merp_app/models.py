@@ -1,6 +1,5 @@
 from django.db import models
-import uuid
-
+from .random_sequence_generator import generate_unique_code
 
 # Create your models here.
 class Event(models.Model):
@@ -16,6 +15,6 @@ class Event(models.Model):
 class Reservation(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='reservations')
     email = models.EmailField()
-    reservation_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    reservation_code = models.CharField(default=generate_unique_code(),max_length=6, editable=False, unique=True)
     status = models.CharField(max_length=50, default='active')
     created_at = models.DateTimeField(auto_now_add=True)
