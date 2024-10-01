@@ -11,5 +11,5 @@ class EventSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ['event', 'reservation_code', 'status', 'created_ate']
-        read_only_fields = ['reservation_code']
+        fields = ['event', 'email','reservation_code', 'created_at', 'email']
+        read_only_fields = ['reservation_code','created_at']
