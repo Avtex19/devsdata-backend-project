@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from ..random_sequence_generator import generate_unique_code
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from ..models import Event, Reservation
 from .serializers import EventSerializer, ReservationSerializer, ReservationCancellationSerializer
 from rest_framework import generics, status
+from django.utils import timezone
 
 
 # Create your views here.
@@ -71,15 +72,16 @@ class CancelReservation(generics.DestroyAPIView):
         reservation = self.get_object()
         event = reservation.event
 
-        event_start_datetime = datetime.combine(event.start_date, datetime.min.time())
-        event_end_datetime = datetime.combine(event.end_date, datetime.min.time())
+        event_start_datetime = event.start_date
+        event_end_datetime = event.end_date
 
-        event_duration = event_end_datetime - event_start_datetime
+        current_datetime = timezone.now()
 
-        if event_start_datetime <= datetime.now() + timedelta(days=2):
+        if event_start_datetime <= current_datetime + timedelta(days=2):
             return Response({"error": "You cannot cancel this reservation within two days of the event."},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        event_duration = event_end_datetime - event_start_datetime
         if event_duration > timedelta(days=2):
             return Response({"error": "You cannot cancel this reservation for events longer than two days."},
                             status=status.HTTP_400_BAD_REQUEST)
