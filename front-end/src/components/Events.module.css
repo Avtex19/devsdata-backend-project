@@ -60,7 +60,7 @@
 
 .button {
     padding: 10px 20px;
-    background-color: #022c46;
+    background-color: #008CBA;
     color: white;
     border: none;
     border-radius: 10px;
@@ -71,8 +71,6 @@
 .button:hover {
     background-color: #0a7044;
 }
-
-
 
 .registerSection {
     margin-top: 20px;
