@@ -1,9 +1,10 @@
 import React from 'react';
+import Events from "./components/Events.tsx";
 
 const App: React.FC = () => {
     return (
         <div>
-            <h1>Welcome to Events</h1>
+            <Events />
         </div>
     );
 };
