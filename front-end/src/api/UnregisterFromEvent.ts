@@ -21,6 +21,12 @@ export const unregisterFromEvent = async (reservationCode: string): Promise<void
 
         return;
     } catch (error) {
-        throw new Error(error as string);
+        if (error instanceof Error) {
+            // Rethrow the error with its message
+            throw new Error(error.message);
+        } else {
+            // In case the error is not an instance of Error, throw a generic error
+            throw new Error('An unexpected error occurred');
+        }
     }
 };
