@@ -78,12 +78,12 @@ class CancelReservation(generics.DestroyAPIView):
         current_datetime = timezone.now()
 
         if event_start_datetime <= current_datetime + timedelta(days=2):
-            return Response({"error": "You cannot cancel this reservation within two days of the event."},
+            return Response({"error": "Bookings can only be canceled up to two days before the event starts"},
                             status=status.HTTP_400_BAD_REQUEST)
 
         event_duration = event_end_datetime - event_start_datetime
         if event_duration > timedelta(days=2):
-            return Response({"error": "You cannot cancel this reservation for events longer than two days."},
+            return Response({"error": "You can only cancel bookings for events that last no longer than two days."},
                             status=status.HTTP_400_BAD_REQUEST)
 
         reservation.delete()
