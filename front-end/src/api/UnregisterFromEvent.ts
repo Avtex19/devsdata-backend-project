@@ -1,20 +1,22 @@
-const API_URL = 'http://localhost:8000/api/reservation/cancel/';
+import axios from 'axios';
 
-export const unregisterFromEvent = async (reservationCode: string): Promise<void> => {
-    const isConfirmed = window.confirm("Are you sure you want to unregister from this event?");
+export async function unregisterFromEvent(reservationCode: string) {
+    try {
+        const response = await axios.delete(`http://localhost:8000/api/reservation/cancel/${reservationCode}/`, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
 
-    if (!isConfirmed) {
-        return;
+        return response.data;
+    } catch (error) {
+        console.error('Error canceling reservation:', error);
+
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data.error || 'Unknown error occurred';
+            throw new Error(errorMessage);
+        } else {
+            throw new Error('An unexpected error occurred.');
+        }
     }
-
-    const response = await fetch(`${API_URL}${reservationCode}/`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to unregister from the event');
-    }
-};
+}
