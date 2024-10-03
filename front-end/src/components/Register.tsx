@@ -15,6 +15,7 @@ const Register: React.FC = () => {
 
     const handleRegister = async () => {
         if (!eventId) return;
+
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(email)) {
             setMessage('Please enter a valid email.');
@@ -28,7 +29,8 @@ const Register: React.FC = () => {
             setMessageType('success');
             setEmail('');
         } catch (error) {
-            setMessage((error as Error).message);
+            const errorMessage = (error as Error).message;
+            setMessage(errorMessage);
             setMessageType('error');
         }
     };
