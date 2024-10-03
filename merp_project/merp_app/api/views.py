@@ -15,6 +15,7 @@ def getRoutes(request):
         'events/',
         'reservation/',
         'reservation/create',
+        'reservation/cancel',
     ]
     return Response(routes)
 
