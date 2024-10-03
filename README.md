@@ -20,7 +20,7 @@ The project is divided into two parts:
 To run the backend, follow these steps:
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 pip install django
 pip install djangorestframework
