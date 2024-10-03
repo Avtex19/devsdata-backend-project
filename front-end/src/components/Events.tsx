@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchEvents } from '../api/FetchEvents.ts';
 import styles from './Events.module.css';
-import { registerForEvent } from '../api/RegisterForEvent.ts';
 
 interface Event {
     id: number;
@@ -17,10 +17,8 @@ const Events: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [offset, setOffset] = useState<number>(0);
     const [hasMore, setHasMore] = useState<boolean>(true);
-    const [email, setEmail] = useState<string>('');
-    const [registrationMessages, setRegistrationMessages] = useState<{ [key: number]: { message: string | null; type: 'success' | 'error' } }>({});
-    const [registeringEventId, setRegisteringEventId] = useState<number | null>(null);
-
+    const [reservationCode, setReservationCode] = useState<string>('');
+    const navigate = useNavigate();
     const limit = 5;
 
     useEffect(() => {
@@ -41,48 +39,13 @@ const Events: React.FC = () => {
     }, [offset]);
 
     const handleShowEmailInput = (eventId: number) => {
-        setRegisteringEventId(eventId);
+        navigate(`/register?eventId=${eventId}`);
     };
 
-    const handleRegister = async (eventId: number) => {
-        if (!email) {
-            setRegistrationMessages({
-                ...registrationMessages,
-                [eventId]: { message: 'Please enter your email.', type: 'error' }
-            });
-            return;
+    const handleSearchReservation = () => {
+        if (reservationCode) {
+            navigate(`/reservation?reservationCode=${reservationCode}`);
         }
-
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(email)) {
-            setRegistrationMessages({
-                ...registrationMessages,
-                [eventId]: { message: 'Please enter a valid email.', type: 'error' }
-            });
-            return;
-        }
-
-        try {
-            const response = await registerForEvent(eventId, email);
-            setRegistrationMessages({
-                ...registrationMessages,
-                [eventId]: { message: `Successfully registered for event with code: ${response.reservation_code}`, type: 'success' }
-            });
-            setRegisteringEventId(null);
-            setEmail('');
-        } catch (error) {
-            setRegistrationMessages({
-                ...registrationMessages,
-                [eventId]: { message: (error as Error).message, type: 'error' }
-            });
-        }
-    };
-
-    const handleDismissMessage = (eventId: number) => {
-        setRegistrationMessages({
-            ...registrationMessages,
-            [eventId]: { message: null, type: 'error' }
-        });
     };
 
     if (loading) return <p>Loading events...</p>;
@@ -91,6 +54,20 @@ const Events: React.FC = () => {
     return (
         <div className={styles.container}>
             <h1 className={styles.heading}>Events</h1>
+
+            <div className={styles.searchSection}>
+                <input
+                    type="text"
+                    placeholder="Enter reservation code"
+                    value={reservationCode}
+                    onChange={(e) => setReservationCode(e.target.value)}
+                    className={styles.inputField}
+                />
+                <button className={styles.button} onClick={handleSearchReservation}>
+                    Search Reservation
+                </button>
+            </div>
+
             {events.length === 0 ? (
                 <p>No events found</p>
             ) : (
@@ -106,7 +83,6 @@ const Events: React.FC = () => {
                                     End Date: {new Date(event.end_date).toLocaleDateString()}
                                 </span>
                             </p>
-
                             {event.thumbnail && (
                                 <img
                                     src={event.thumbnail}
@@ -114,48 +90,14 @@ const Events: React.FC = () => {
                                     className={styles.eventThumbnail}
                                 />
                             )}
-
                             <div className={styles.registerSection}>
-                                {registeringEventId === event.id ? (
-                                    <>
-                                        <input
-                                            type="email"
-                                            placeholder="Enter your email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            className={styles.emailInput}
-                                        />
-                                        <button
-                                            className={styles.button}
-                                            onClick={() => handleRegister(event.id)}
-                                        >
-                                            Register
-                                        </button>
-                                    </>
-                                ) : (
-                                    <button
-                                        className={styles.button}
-                                        onClick={() => handleShowEmailInput(event.id)}
-                                    >
-                                        Register
-                                    </button>
-                                )}
-                            </div>
-
-                            {registrationMessages[event.id]?.message && (
-                                <div
-                                    className={
-                                        registrationMessages[event.id]?.type === 'error'
-                                            ? styles.errorMessage
-                                            : styles.successMessage
-                                    }
+                                <button
+                                    className={styles.button}
+                                    onClick={() => handleShowEmailInput(event.id)}
                                 >
-                                    <p>{registrationMessages[event.id]?.message}</p>
-                                    <span className={styles.dismissButton} onClick={() => handleDismissMessage(event.id)}>
-                                        &times;
-                                    </span>
-                                </div>
-                            )}
+                                    Register
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
