@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchEvents } from '../api/FetchEvents.ts';
 import styles from './Events.module.css';
 
@@ -15,17 +15,20 @@ const Events: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [offset, setOffset] = useState<number>(0);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [reservationCode, setReservationCode] = useState<string>('');
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const limit = 5;
+
+    // Get the current page from the URL
+    const page = parseInt(searchParams.get('page') || '1', 10);
 
     useEffect(() => {
         const loadEvents = async () => {
             try {
                 setLoading(true);
-                const data = await fetchEvents(limit, offset);
+                const data = await fetchEvents(limit, (page - 1) * limit); // Offset based on the page number
                 setEvents(data.results);
                 setHasMore(data.next !== null);
                 setLoading(false);
@@ -36,7 +39,7 @@ const Events: React.FC = () => {
         };
 
         loadEvents();
-    }, [offset]);
+    }, [page]); // Fetch events when the page changes
 
     const handleShowEmailInput = (eventId: number) => {
         navigate(`/register?eventId=${eventId}`);
@@ -46,6 +49,10 @@ const Events: React.FC = () => {
         if (reservationCode) {
             navigate(`/reservation?reservationCode=${reservationCode}`);
         }
+    };
+
+    const handlePageChange = (newPage: number) => {
+        setSearchParams({ page: newPage.toString() });
     };
 
     if (loading) return <p>Loading events...</p>;
@@ -104,10 +111,10 @@ const Events: React.FC = () => {
             )}
 
             <div className={styles.pagination}>
-                {offset > 0 && (
+                {page > 1 && (
                     <button
                         className={styles.button}
-                        onClick={() => setOffset((prev) => Math.max(prev - limit, 0))}
+                        onClick={() => handlePageChange(page - 1)}
                     >
                         Previous
                     </button>
@@ -115,7 +122,7 @@ const Events: React.FC = () => {
                 {hasMore && (
                     <button
                         className={styles.button}
-                        onClick={() => setOffset((prev) => prev + limit)}
+                        onClick={() => handlePageChange(page + 1)}
                     >
                         Next
                     </button>
