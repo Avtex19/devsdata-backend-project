@@ -3,7 +3,7 @@ from ..random_sequence_generator import generate_unique_code
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from ..models import Event, Reservation
-from .serializers import EventSerializer, ReservationSerializer, ReservationCancellationSerializer
+from .serializers import EventSerializer, ReservationSerializer, ReservationCancellationSerializer,CreateReservationSerializer
 from rest_framework import generics, status
 from django.utils import timezone
 
@@ -26,7 +26,7 @@ class ViewEvents(generics.ListAPIView):
 
 class CreateReservation(generics.CreateAPIView):
     queryset = Reservation.objects.all()
-    serializer_class = ReservationSerializer
+    serializer_class = CreateReservationSerializer
 
     unique_code = generate_unique_code()
     print(unique_code)

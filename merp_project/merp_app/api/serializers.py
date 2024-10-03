@@ -8,7 +8,14 @@ class EventSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CreateReservationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = ['event', 'reservation_code', 'created_at', 'email']
+        read_only_fields = ['reservation_code', 'created_at']
+
 class ReservationSerializer(serializers.ModelSerializer):
+    event = EventSerializer()
     class Meta:
         model = Reservation
         fields = ['event', 'reservation_code', 'created_at', 'email']
