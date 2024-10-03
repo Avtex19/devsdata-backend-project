@@ -14,6 +14,11 @@ class CreateReservationSerializer(serializers.ModelSerializer):
         fields = ['event', 'reservation_code', 'created_at', 'email']
         read_only_fields = ['reservation_code', 'created_at']
 
+    def validate(self, data):
+        if Reservation.objects.filter(event=data['event'], email=data['email']).exists():
+            raise serializers.ValidationError("A reservation with the same event and email already exists.")
+        return data
+
 class ReservationSerializer(serializers.ModelSerializer):
     event = EventSerializer()
     class Meta:
