@@ -19,8 +19,10 @@ class CreateReservationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("A reservation with the same event and email already exists.")
         return data
 
+
 class ReservationSerializer(serializers.ModelSerializer):
     event = EventSerializer()
+
     class Meta:
         model = Reservation
         fields = ['event', 'reservation_code', 'created_at', 'email']
