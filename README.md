@@ -25,6 +25,8 @@ source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 pip install django
 pip install djangorestframework
 pip install django-cors-headers
+pip install pillow
+pip install drf-yasg
 # Run migrations
 python manage.py makemigrations
 python manage.py migrate
